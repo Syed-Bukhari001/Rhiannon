@@ -58,6 +58,132 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
+const journeySteps = [
+  {
+    icon: Search,
+    title: "Discover the right departure",
+    body: "Travellers compare dates, difficulty, inclusions and the host story before they commit.",
+  },
+  {
+    icon: CreditCard,
+    title: "Reserve with a deposit",
+    body: "A clear deposit-first booking flow keeps the barrier low while protecting each group place.",
+  },
+  {
+    icon: FileText,
+    title: "Complete the trip pack",
+    body: "Forms, insurance prompts, packing notes and payment reminders can all sit in one journey.",
+  },
+  {
+    icon: Users,
+    title: "Arrive already connected",
+    body: "The site can hand travellers into a community chat, itinerary hub and hosted experience.",
+  },
+];
+
+const platformProof = [
+  {
+    icon: ShieldCheck,
+    title: "Trust before checkout",
+    body: "Policies, inclusions, insurance reminders and payment timing are presented before deposit.",
+  },
+  {
+    icon: Bell,
+    title: "Waitlists that sell future trips",
+    body: "Interest for Peru, Dolomites or Japan can become launch lists instead of lost Instagram DMs.",
+  },
+  {
+    icon: LayoutDashboard,
+    title: "Ops dashboard",
+    body: "Rhiannon can see capacity, balances, traveller readiness and launch tasks from one place.",
+  },
+];
+
+const tripCapacity = {
+  greece: 14,
+  georgia: 14,
+  peru: 14,
+};
+
+const tripReadiness = [
+  { tripId: "greece", score: 84, status: "Ready to promote", next: "Add final hotel supplier PDF" },
+  { tripId: "georgia", score: 72, status: "Almost ready", next: "Confirm local transfer invoice" },
+  { tripId: "peru", score: 38, status: "Concept stage", next: "Run waitlist destination survey" },
+];
+
+const sourceBreakdown = [
+  { source: "Instagram stories", leads: 18, conversion: "41%" },
+  { source: "Link in bio", leads: 11, conversion: "28%" },
+  { source: "YouTube", leads: 6, conversion: "19%" },
+  { source: "Referrals", leads: 4, conversion: "12%" },
+];
+
+const automationQueue = [
+  { icon: Mail, title: "Greece balance reminder", meta: "Send to 2 travellers on Jun 7, 2026" },
+  { icon: ShieldCheck, title: "Insurance proof check", meta: "Flag missing upload 30 days before departure" },
+  { icon: FileText, title: "Trip pack release", meta: "Share packing list, map and airport notes" },
+  { icon: Bell, title: "Peru waitlist launch", meta: "Invite high-intent leads before public launch" },
+];
+
+const recentActivity = [
+  { time: "Today", title: "Maya paid Greece deposit", body: "Booking BK-1024 moved to deposit paid." },
+  { time: "Today", title: "Peru waitlist lead added", body: "Amelia R. joined from an Instagram story." },
+  { time: "Yesterday", title: "Georgia trip updated", body: "Difficulty note and gear requirements were refreshed." },
+  { time: "Jul 10", title: "Trip pack drafted", body: "Greece packing list is ready for review." },
+];
+
+const travellerReadiness = {
+  "BK-1024": { passport: true, insurance: true, form: true, emergency: true, note: "Ready for trip pack" },
+  "BK-1025": { passport: true, insurance: false, form: false, emergency: true, note: "Needs form and insurance" },
+  "BK-1026": { passport: true, insurance: true, form: true, emergency: true, note: "Paid in full" },
+  "BK-1027": { passport: true, insurance: false, form: true, emergency: false, note: "Collect emergency contact" },
+};
+
+const messageTemplates = [
+  {
+    title: "Booking confirmation",
+    subject: "You are in: your Rhiannon Hikes deposit is confirmed",
+    body: "Confirms the trip, deposit, balance timeline, next forms and the hosted group experience.",
+    stats: ["Sent after payment", "95% open target", "Traveller portal link"],
+  },
+  {
+    title: "Balance reminder",
+    subject: "Your final balance is due soon",
+    body: "Friendly reminder with payment link, due date, cancellation note and support contact.",
+    stats: ["90 day trigger", "2 pending travellers", "Auto follow-up"],
+  },
+  {
+    title: "Trip pack",
+    subject: "Your Greece trip pack is ready",
+    body: "Packing list, arrival notes, route expectations, community chat and emergency contacts.",
+    stats: ["30 day trigger", "PDF attachment", "Chat invite"],
+  },
+  {
+    title: "Waitlist launch",
+    subject: "First access: Peru is opening soon",
+    body: "Turns high-intent waitlist leads into early deposits before a public launch.",
+    stats: ["4 hot leads", "Survey link", "Priority window"],
+  },
+];
+
+const launchSettings = [
+  {
+    title: "Payments",
+    body: "Stripe test mode, deposit amounts, balance deadlines, refund notes and receipt emails.",
+    items: ["Deposit checkout", "Balance reminders", "Receipt templates"],
+  },
+  {
+    title: "Legal and safety",
+    body: "Cancellation policy, insurance notices, liability copy and supplier documentation.",
+    items: ["Terms upload", "Insurance prompt", "Emergency contacts"],
+  },
+  {
+    title: "Team controls",
+    body: "Future admin roles for Rhiannon, support staff, guides and read-only finance access.",
+    items: ["Owner role", "Guide access", "Audit log"],
+  },
+];
+
 function ButtonLink({ href, children, variant = "primary", icon = true }) {
   return (
     <a className={`button ${variant}`} href={href}>
@@ -111,6 +237,80 @@ function SectionIntro({ eyebrow, title, body, light = false }) {
       <h2>{title}</h2>
       {body ? <p>{body}</p> : null}
     </div>
+  );
+}
+
+function HowItWorksSection() {
+  return (
+    <section className="booking-journey">
+      <div className="section-shell">
+        <div className="section-heading-row">
+          <SectionIntro
+            eyebrow="Booking journey"
+            title="From Instagram interest to a paid, prepared traveller."
+            body="The prototype shows the full customer path Rhiannon needs: sell the trip, take a deposit, collect essentials and keep the group warm before departure."
+          />
+          <ButtonLink href="#/book/greece" variant="light">Try mock booking</ButtonLink>
+        </div>
+        <div className="journey-grid">
+          {journeySteps.map(({ icon: Icon, title, body }, index) => (
+            <motion.article
+              className="journey-card"
+              key={title}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.28 }}
+              variants={fadeUp}
+              transition={{ duration: 0.38, delay: index * 0.06, ease: "easeOut" }}
+            >
+              <span className="journey-number">0{index + 1}</span>
+              <Icon size={25} aria-hidden="true" />
+              <h3>{title}</h3>
+              <p>{body}</p>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PlatformPotentialSection() {
+  return (
+    <section className="platform-potential">
+      <div className="section-shell platform-grid">
+        <div className="platform-copy">
+          <span className="script-label">What she can grow into</span>
+          <h2>A travel brand, booking engine and ops hub in one polished experience.</h2>
+          <p>
+            Phase 1 is still a prototype, but the structure is designed for the real build: payments,
+            traveller records, waitlists, automated email packs and admin workflows can be added on top.
+          </p>
+          <div className="story-actions">
+            <ButtonLink href="#/admin">Open admin demo</ButtonLink>
+            <ButtonLink href="#/trips" variant="ghost">Browse trips</ButtonLink>
+          </div>
+        </div>
+        <div className="potential-card-grid">
+          {platformProof.map(({ icon: Icon, title, body }, index) => (
+            <motion.article
+              className="potential-card"
+              key={title}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.34, delay: index * 0.06 }}
+            >
+              <Icon size={24} aria-hidden="true" />
+              <div>
+                <h3>{title}</h3>
+                <p>{body}</p>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -472,6 +672,8 @@ function HomePage() {
         ))}
       </section>
 
+      <HowItWorksSection />
+
       <section className="story-section" id="about">
         <img src={asset("assets/group-sunset.png")} alt="Small group of hikers celebrating at sunset" loading="lazy" />
         <div>
@@ -487,6 +689,8 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      <PlatformPotentialSection />
     </>
   );
 }
@@ -819,10 +1023,26 @@ function BookingFlow({ trip }) {
 function AdminDashboard() {
   const [module, setModule] = useState("Dashboard");
   const [selectedTripId, setSelectedTripId] = useState("greece");
+  const [selectedTemplate, setSelectedTemplate] = useState(messageTemplates[0].title);
   const [toast, setToast] = useState("");
   const selectedTrip = trips.find((trip) => trip.id === selectedTripId) || trips[0];
+  const selectedReadiness = tripReadiness.find((item) => item.tripId === selectedTrip.id) || tripReadiness[0];
+  const selectedEmail = messageTemplates.find((template) => template.title === selectedTemplate) || messageTemplates[0];
   const totalRevenue = bookings.reduce((sum, booking) => sum + booking.paid, 0);
   const remainingBalance = bookings.reduce((sum, booking) => sum + booking.balance, 0);
+  const bookedByTrip = bookings.reduce((acc, booking) => {
+    acc[booking.tripId] = (acc[booking.tripId] || 0) + 1;
+    return acc;
+  }, {});
+  const nextDeparture = trips.find((trip) => trip.status === "Open") || trips[0];
+  const nextCapacity = tripCapacity[nextDeparture.id] || 14;
+  const nextBooked = bookedByTrip[nextDeparture.id] || 0;
+  const nextOccupancy = Math.round((nextBooked / nextCapacity) * 100);
+  const openDepartures = trips.filter((trip) => trip.status === "Open").length;
+  const incompleteTravellers = bookings.filter((booking) => {
+    const readiness = travellerReadiness[booking.id];
+    return readiness && (!readiness.insurance || !readiness.form || !readiness.emergency);
+  }).length;
 
   const notify = (message) => {
     setToast(message);
@@ -882,53 +1102,146 @@ function AdminDashboard() {
           <div className="admin-grid">
             <AdminMetric title="Deposits collected" value={formatMoney(totalRevenue)} icon={CircleDollarSign} delay={0} />
             <AdminMetric title="Balance outstanding" value={formatMoney(remainingBalance)} icon={CreditCard} delay={0.05} />
-            <AdminMetric title="Open departures" value="2" icon={Plane} delay={0.1} />
+            <AdminMetric title="Open departures" value={String(openDepartures)} icon={Plane} delay={0.1} />
             <AdminMetric title="Waitlist leads" value={String(waitlist.length)} icon={Bell} delay={0.15} />
 
-            <section className="admin-panel wide">
+            <section className="admin-panel admin-command-panel wide">
               <div className="panel-heading">
-                <h2>Departure health</h2>
-                <button type="button" onClick={() => notify("Trip health report refreshed")}>
+                <h2>Command center</h2>
+                <button type="button" onClick={() => notify("Command center refreshed")}>
                   <Eye size={17} aria-hidden="true" />
                   Refresh
                 </button>
               </div>
-              <div className="departure-health">
-                {trips.map((trip, index) => (
-                  <div className="health-row" key={trip.id}>
-                    <span>{trip.title}</span>
-                    <div className="health-track">
-                      <motion.i
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: 0.5, delay: index * 0.06, ease: "easeOut" }}
-                        style={{ width: `${trip.status === "Waitlist" ? 42 : 78}%`, background: trip.accent }}
-                      />
+              <div className="command-layout">
+                <div className="command-spotlight">
+                  <span className="admin-kicker">Next departure</span>
+                  <h3>{nextDeparture.title}</h3>
+                  <p>{nextDeparture.dates} · {nextDeparture.region}</p>
+                  <div className="command-stat-grid">
+                    <div>
+                      <span>Booked</span>
+                      <strong>{nextBooked}/{nextCapacity}</strong>
                     </div>
-                    <strong>{trip.status === "Waitlist" ? "Building interest" : `${trip.spotsLeft} spots left`}</strong>
+                    <div>
+                      <span>Open spots</span>
+                      <strong>{Math.max(nextCapacity - nextBooked, 0)}</strong>
+                    </div>
+                    <div>
+                      <span>Incomplete files</span>
+                      <strong>{incompleteTravellers}</strong>
+                    </div>
                   </div>
-                ))}
+                  <AdminProgressBar label="Capacity filled" value={nextOccupancy} meta={`${nextOccupancy}% booked`} />
+                  <AdminProgressBar label="Launch readiness" value={84} meta="Trip page, checkout and email pack nearly ready" />
+                </div>
+                <div className="readiness-stack">
+                  <h3>Departure readiness</h3>
+                  {tripReadiness.map((item) => {
+                    const trip = trips.find((entry) => entry.id === item.tripId);
+                    return (
+                      <AdminProgressBar
+                        key={item.tripId}
+                        label={trip?.title || item.tripId}
+                        value={item.score}
+                        meta={`${item.status}: ${item.next}`}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </section>
 
             <section className="admin-panel">
               <div className="panel-heading">
-                <h2>Action queue</h2>
+                <h2>Automation queue</h2>
               </div>
-              <ul className="task-list">
-                <li>
-                  <ShieldCheck size={18} aria-hidden="true" />
-                  Review insurance copy before public launch.
-                </li>
-                <li>
-                  <Mail size={18} aria-hidden="true" />
-                  Send Greece balance reminder template.
-                </li>
-                <li>
-                  <FileText size={18} aria-hidden="true" />
-                  Upload cancellation policy and travel terms.
-                </li>
-              </ul>
+              <div className="automation-list">
+                {automationQueue.map(({ icon: Icon, title, meta }) => (
+                  <button key={title} type="button" onClick={() => notify(`${title} opened`)}>
+                    <Icon size={18} aria-hidden="true" />
+                    <span>
+                      <strong>{title}</strong>
+                      <small>{meta}</small>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section className="admin-panel">
+              <div className="panel-heading compact">
+                <h2>Lead sources</h2>
+              </div>
+              <div className="source-list">
+                {sourceBreakdown.map((item, index) => (
+                  <div className="source-row" key={item.source}>
+                    <span>{item.source}</span>
+                    <strong>{item.leads} leads</strong>
+                    <div className="health-track">
+                      <motion.i
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: 0.48, delay: index * 0.05 }}
+                        style={{ width: item.conversion, background: index === 0 ? "var(--copper)" : "var(--forest-600)" }}
+                      />
+                    </div>
+                    <small>{item.conversion} conversion</small>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="admin-panel wide">
+              <div className="panel-heading">
+                <h2>Money by departure</h2>
+                <button type="button" onClick={() => notify("Finance snapshot exported")}>
+                  <Download size={17} aria-hidden="true" />
+                  Export CSV
+                </button>
+              </div>
+              <div className="finance-bars">
+                {trips.map((trip, index) => {
+                  const tripBookings = bookings.filter((booking) => booking.tripId === trip.id);
+                  const collected = tripBookings.reduce((sum, booking) => sum + booking.paid, 0);
+                  const potential = Math.max((tripCapacity[trip.id] || 14) * trip.price, 1);
+                  const percent = Math.round((collected / potential) * 100);
+                  return (
+                    <div className="finance-row" key={trip.id}>
+                      <div>
+                        <strong>{trip.title}</strong>
+                        <span>{formatMoney(collected)} collected · {tripBookings.length} bookings</span>
+                      </div>
+                      <div className="health-track">
+                        <motion.i
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ duration: 0.55, delay: index * 0.06 }}
+                          style={{ width: `${Math.max(percent, 5)}%`, background: trip.accent }}
+                        />
+                      </div>
+                      <small>{percent}% of potential</small>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="admin-panel">
+              <div className="panel-heading compact">
+                <h2>Recent activity</h2>
+              </div>
+              <div className="activity-feed">
+                {recentActivity.map((item) => (
+                  <article key={`${item.time}-${item.title}`}>
+                    <span>{item.time}</span>
+                    <div>
+                      <strong>{item.title}</strong>
+                      <p>{item.body}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </section>
           </div>
         ) : null}
@@ -947,7 +1260,7 @@ function AdminDashboard() {
                   <img src={trip.image} alt="" aria-hidden="true" />
                   <span>
                     <strong>{trip.title}</strong>
-                    <small>{trip.dates}</small>
+                    <small>{trip.dates} · {bookedByTrip[trip.id] || 0}/{tripCapacity[trip.id] || 14} booked</small>
                   </span>
                   <i>{trip.status}</i>
                 </button>
@@ -989,6 +1302,35 @@ function AdminDashboard() {
                 Public summary
                 <textarea defaultValue={selectedTrip.summary} />
               </label>
+              <div className="trip-admin-insights">
+                <AdminProgressBar
+                  label="Launch readiness"
+                  value={selectedReadiness.score}
+                  meta={`${selectedReadiness.status}: ${selectedReadiness.next}`}
+                />
+                <AdminProgressBar
+                  label="Capacity"
+                  value={Math.round(((bookedByTrip[selectedTrip.id] || 0) / (tripCapacity[selectedTrip.id] || 14)) * 100)}
+                  meta={`${bookedByTrip[selectedTrip.id] || 0}/${tripCapacity[selectedTrip.id] || 14} travellers booked`}
+                />
+                <AdminProgressBar
+                  label="Balance collection"
+                  value={selectedTrip.status === "Waitlist" ? 0 : 22}
+                  meta={selectedTrip.status === "Waitlist" ? "Open deposits before balance tracking" : "Deposits received, final balance not due yet"}
+                />
+              </div>
+              <div className="admin-itinerary-preview">
+                <h3>Itinerary builder preview</h3>
+                {selectedTrip.itinerary.slice(0, 4).map((item) => (
+                  <article key={item.day}>
+                    <span>{item.day}</span>
+                    <div>
+                      <strong>{item.title}</strong>
+                      <p>{item.body}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
               <div className="capability-grid">
                 {[
                   "Itinerary builder",
@@ -1017,6 +1359,23 @@ function AdminDashboard() {
                 Send reminders
               </button>
             </div>
+            <div className="booking-admin-summary">
+              <div>
+                <span>Collected</span>
+                <strong>{formatMoney(totalRevenue)}</strong>
+                <small>Deposits and paid-in-full bookings</small>
+              </div>
+              <div>
+                <span>Outstanding</span>
+                <strong>{formatMoney(remainingBalance)}</strong>
+                <small>Future balance collection</small>
+              </div>
+              <div>
+                <span>Needs attention</span>
+                <strong>{incompleteTravellers}</strong>
+                <small>Traveller records incomplete</small>
+              </div>
+            </div>
             <div className="table-wrap">
               <table>
                 <thead>
@@ -1028,6 +1387,8 @@ function AdminDashboard() {
                     <th>Paid</th>
                     <th>Balance</th>
                     <th>Due</th>
+                    <th>Room</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1049,6 +1410,12 @@ function AdminDashboard() {
                         <td>{formatMoney(booking.paid)}</td>
                         <td>{formatMoney(booking.balance)}</td>
                         <td>{booking.due}</td>
+                        <td>{booking.room}</td>
+                        <td>
+                          <button className="table-action" type="button" onClick={() => notify(`${booking.id} opened`)}>
+                            Open
+                          </button>
+                        </td>
                       </motion.tr>
                     );
                   })}
@@ -1068,52 +1435,124 @@ function AdminDashboard() {
               </button>
             </div>
             <div className="traveller-grid">
-              {bookings.map((booking) => (
-                <article className="traveller-card" key={booking.id}>
-                  <UserCheck size={24} aria-hidden="true" />
-                  <h3>{booking.traveller}</h3>
-                  <p>{booking.room}</p>
-                  <span>{booking.status}</span>
-                </article>
-              ))}
+              {bookings.map((booking) => {
+                const readiness = travellerReadiness[booking.id];
+                const trip = trips.find((item) => item.id === booking.tripId);
+                return (
+                  <article className="traveller-card" key={booking.id}>
+                    <div className="traveller-card-head">
+                      <UserCheck size={24} aria-hidden="true" />
+                      <span>{booking.status}</span>
+                    </div>
+                    <h3>{booking.traveller}</h3>
+                    <p>{trip?.title} · {booking.room}</p>
+                    <ul className="traveller-checks">
+                      {[
+                        ["Passport", readiness?.passport],
+                        ["Insurance", readiness?.insurance],
+                        ["Form", readiness?.form],
+                        ["Emergency", readiness?.emergency],
+                      ].map(([label, complete]) => (
+                        <li className={complete ? "complete" : ""} key={label}>
+                          <Check size={14} aria-hidden="true" />
+                          {label}
+                        </li>
+                      ))}
+                    </ul>
+                    <small>{readiness?.note}</small>
+                  </article>
+                );
+              })}
             </div>
           </section>
         ) : null}
 
         {module === "Messages" ? (
-          <section className="admin-panel messages-panel">
-            <div>
-              <h2>Email templates</h2>
-              <p>Confirmation, balance reminders, trip packs and waitlist launch emails.</p>
-            </div>
-            {["Booking confirmation", "Balance reminder", "Trip pack", "Waitlist launch"].map((template) => (
-              <button key={template} type="button" onClick={() => notify(`${template} preview opened`)}>
-                <Mail size={18} aria-hidden="true" />
-                <span>{template}</span>
-                <ChevronRight size={17} aria-hidden="true" />
-              </button>
-            ))}
-          </section>
+          <div className="messages-layout">
+            <section className="admin-panel messages-panel">
+              <div>
+                <h2>Email templates</h2>
+                <p>Confirmation, balance reminders, trip packs and waitlist launch emails.</p>
+              </div>
+              {messageTemplates.map((template) => (
+                <button
+                  key={template.title}
+                  className={selectedTemplate === template.title ? "active" : ""}
+                  type="button"
+                  onClick={() => {
+                    setSelectedTemplate(template.title);
+                    notify(`${template.title} preview opened`);
+                  }}
+                >
+                  <Mail size={18} aria-hidden="true" />
+                  <span>{template.title}</span>
+                  <ChevronRight size={17} aria-hidden="true" />
+                </button>
+              ))}
+            </section>
+            <section className="admin-panel template-preview">
+              <span className="admin-kicker">Template preview</span>
+              <h2>{selectedEmail.subject}</h2>
+              <p>{selectedEmail.body}</p>
+              <div className="template-stat-grid">
+                {selectedEmail.stats.map((stat) => (
+                  <span key={stat}>
+                    <Check size={15} aria-hidden="true" />
+                    {stat}
+                  </span>
+                ))}
+              </div>
+              <div className="email-preview-card">
+                <strong>Hi Maya,</strong>
+                <p>
+                  Your place on {nextDeparture.title} is reserved. Your deposit is confirmed,
+                  and your next step is to complete the traveller form so we can prepare the group.
+                </p>
+                <button type="button" onClick={() => notify("Preview email sent")}>
+                  <Send size={17} aria-hidden="true" />
+                  Send test email
+                </button>
+              </div>
+            </section>
+          </div>
         ) : null}
 
         {module === "Settings" ? (
-          <section className="admin-panel settings-panel">
-            <h2>Launch checklist</h2>
-            <div className="checklist-grid">
-              {[
-                "Stripe test mode connected",
-                "Terms and cancellation policy uploaded",
-                "Travel insurance notice visible",
-                "Admin roles and audit log ready",
-                "Email sender verified",
-                "Traveller portal enabled",
-              ].map((item, index) => (
-                <label key={item}>
-                  <input type="checkbox" defaultChecked={index < 3} />
-                  <span>{item}</span>
-                </label>
+          <section className="settings-layout">
+            <div className="settings-card-grid">
+              {launchSettings.map((group) => (
+                <article className="admin-panel settings-card" key={group.title}>
+                  <h2>{group.title}</h2>
+                  <p>{group.body}</p>
+                  <ul>
+                    {group.items.map((item) => (
+                      <li key={item}>
+                        <Check size={15} aria-hidden="true" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
               ))}
             </div>
+            <section className="admin-panel settings-panel">
+              <h2>Launch checklist</h2>
+              <div className="checklist-grid">
+                {[
+                  "Stripe test mode connected",
+                  "Terms and cancellation policy uploaded",
+                  "Travel insurance notice visible",
+                  "Admin roles and audit log ready",
+                  "Email sender verified",
+                  "Traveller portal enabled",
+                ].map((item, index) => (
+                  <label key={item}>
+                    <input type="checkbox" defaultChecked={index < 3} />
+                    <span>{item}</span>
+                  </label>
+                ))}
+              </div>
+            </section>
           </section>
         ) : null}
       </section>
@@ -1133,6 +1572,27 @@ function AdminMetric({ title, value, icon: Icon, delay = 0 }) {
       <span>{title}</span>
       <strong>{value}</strong>
     </motion.section>
+  );
+}
+
+function AdminProgressBar({ label, value, meta }) {
+  const safeValue = Math.max(0, Math.min(100, value));
+
+  return (
+    <div className="admin-progress-row">
+      <div>
+        <strong>{label}</strong>
+        <span>{meta}</span>
+      </div>
+      <div className="health-track" aria-label={`${label}: ${safeValue}%`}>
+        <motion.i
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
+          style={{ width: `${safeValue}%`, background: safeValue > 70 ? "var(--forest-600)" : "var(--copper)" }}
+        />
+      </div>
+    </div>
   );
 }
 
