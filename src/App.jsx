@@ -629,9 +629,9 @@ function HomePage() {
           className="photo-stack"
           style={reducedMotion ? undefined : { y: trailPhotoY }}
         >
-          <img src={asset("assets/trip-greece.png")} alt="Greece coastline hiking trip" loading="lazy" />
-          <img src={asset("assets/trip-georgia.png")} alt="Georgia Caucasus mountain trip" loading="lazy" />
-          <img src={asset("assets/group-sunset.png")} alt="Small group hikers at sunset" loading="lazy" />
+          <img src={asset("assets/trip-greece-v2.png")} alt="Greece coastline hiking trip" loading="lazy" />
+          <img src={asset("assets/trip-georgia-v2.png")} alt="Georgia Caucasus mountain trip" loading="lazy" />
+          <img src={asset("assets/group-sunset-v2.png")} alt="Small group hikers at sunset" loading="lazy" />
         </motion.div>
       </section>
 
@@ -675,7 +675,7 @@ function HomePage() {
       <HowItWorksSection />
 
       <section className="story-section" id="about">
-        <img src={asset("assets/group-sunset.png")} alt="Small group of hikers celebrating at sunset" loading="lazy" />
+        <img src={asset("assets/group-sunset-v2.png")} alt="Small group of hikers celebrating at sunset" loading="lazy" />
         <div>
           <span className="script-label">More than a trip</span>
           <h2>It is a way to meet the people you were meant to travel with.</h2>

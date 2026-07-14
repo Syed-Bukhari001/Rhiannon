@@ -145,9 +145,9 @@ function RidgeCards({ progress, reducedMotion }) {
 function ExpeditionPostcards({ progress, reducedMotion }) {
   const group = useRef(null);
   const textures = useTexture([
-    asset("assets/trip-greece.png"),
-    asset("assets/trip-georgia.png"),
-    asset("assets/group-sunset.png"),
+    asset("assets/trip-greece-v2.png"),
+    asset("assets/trip-georgia-v2.png"),
+    asset("assets/group-sunset-v2.png"),
   ]);
 
   useMemo(() => {

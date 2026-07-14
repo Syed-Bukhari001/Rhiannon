@@ -16,7 +16,7 @@ export const trips = [
     groupSize: "8-14 people",
     spotsLeft: 10,
     status: "Open",
-    image: asset("assets/trip-greece.png"),
+    image: asset("assets/trip-greece-v2.png"),
     accent: "#d9873f",
     summary:
       "Island hikes, crystal-blue seas, white villages and epic sunsets. A bucket-list adventure through the best of Greece.",
@@ -79,7 +79,7 @@ export const trips = [
     groupSize: "8-14 people",
     spotsLeft: 12,
     status: "Open",
-    image: asset("assets/trip-georgia.png"),
+    image: asset("assets/trip-georgia-v2.png"),
     accent: "#b66a3c",
     summary:
       "Towering mountains, ancient culture and warm hospitality. Trek the Caucasus and discover the heart of Georgia.",
@@ -142,7 +142,7 @@ export const trips = [
     groupSize: "10-14 people",
     spotsLeft: 0,
     status: "Waitlist",
-    image: asset("assets/group-sunset.png"),
+    image: asset("assets/group-sunset-v2.png"),
     accent: "#c4733f",
     summary:
       "High-altitude trails, ancient paths and a slower adventure through the Andes.",
