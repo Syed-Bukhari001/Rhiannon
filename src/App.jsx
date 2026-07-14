@@ -43,12 +43,15 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
-import { TrailScene } from "./components/TrailScene.jsx";
+import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import { bookings, formatMoney, trips, waitlist } from "./data/trips.js";
 import { navigate, useHashRoute } from "./hooks/useHashRoute.js";
 import { useScrollProgress } from "./hooks/useScrollProgress.js";
 import { asset } from "./utils/assets.js";
+
+const TrailScene = lazy(() =>
+  import("./components/TrailScene.jsx").then((module) => ({ default: module.TrailScene })),
+);
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -200,8 +203,231 @@ function TripCard({ trip, compact = false }) {
   );
 }
 
+const filmScenes = [
+  {
+    eyebrow: "Scene 01",
+    title: "Meet the host",
+    body: "Start with the person you are travelling with: real trail days, honest prep and a group that already feels welcoming.",
+    image: asset("assets/hero-alpine-hiker.png"),
+    stat: "Creator-led",
+  },
+  {
+    eyebrow: "Scene 02",
+    title: "Pick a departure",
+    body: "Browse the places, dates, difficulty and deposit before you commit, with every key detail close to the story.",
+    image: asset("assets/trip-greece.png"),
+    stat: "10 days",
+  },
+  {
+    eyebrow: "Scene 03",
+    title: "Follow the route",
+    body: "See the route come alive before you book, from the first meet-up to the views, swims, meals and shared trail moments.",
+    image: asset("assets/trip-georgia.png"),
+    stat: "8-14 people",
+  },
+  {
+    eyebrow: "Scene 04",
+    title: "Reserve with trust",
+    body: "Lock in the trip with a clear deposit, simple traveller details and no confusion about what happens next.",
+    image: asset("assets/group-sunset.png"),
+    stat: "$400 deposit",
+  },
+];
+
+function FilmFrame({ scene, index, progress, reducedMotion }) {
+  const start = index === 0 ? 0 : index * 0.23;
+  const end = index === filmScenes.length - 1 ? 1 : start + 0.34;
+  const opacity = useTransform(progress, [start, start + 0.07, end - 0.08, end], [0, 1, 1, 0]);
+  const y = useTransform(progress, [start, end], [36 - index * 10, -28 - index * 12]);
+  const scale = useTransform(progress, [start, end], [1.08, 0.96]);
+  const rotate = useTransform(progress, [start, end], [index % 2 === 0 ? -2.5 : 2.5, index % 2 === 0 ? 1 : -1]);
+
+  return (
+    <motion.article
+      className={`film-frame frame-${index + 1}`}
+      style={
+        reducedMotion
+          ? { opacity: index === 0 ? 1 : 0 }
+          : { opacity, y, scale, rotateZ: rotate }
+      }
+      aria-hidden={index !== 0}
+    >
+      <img src={scene.image} alt="" loading={index === 0 ? "eager" : "lazy"} />
+      <div>
+        <span>{scene.eyebrow}</span>
+        <strong>{scene.title}</strong>
+        <small>{scene.stat}</small>
+      </div>
+    </motion.article>
+  );
+}
+
+function FilmChapter({ scene, index, progress, reducedMotion }) {
+  const start = index === 0 ? 0 : index * 0.23;
+  const end = index === filmScenes.length - 1 ? 1 : start + 0.34;
+  const opacity = useTransform(progress, [start, start + 0.06, end - 0.06, end], [0.36, 1, 1, 0.36]);
+  const x = useTransform(progress, [start, end], [10, -3]);
+
+  return (
+    <motion.div className="film-chapter" style={reducedMotion ? undefined : { opacity, x }}>
+      <span>{scene.eyebrow}</span>
+      <strong>{scene.title}</strong>
+      <p>{scene.body}</p>
+    </motion.div>
+  );
+}
+
+function ScrollCinemaSection({ reducedMotion }) {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+  const progressWidth = useTransform(scrollYProgress, [0, 1], ["8%", "100%"]);
+  const stageRotate = useTransform(scrollYProgress, [0, 1], [-7, 7]);
+  const stageY = useTransform(scrollYProgress, [0, 1], [40, -30]);
+
+  return (
+    <section className="scroll-cinema" ref={sectionRef} aria-labelledby="cinema-title">
+      <div className="cinema-sticky">
+        <div className="cinema-copy">
+          <span className="script-label">Scroll film</span>
+          <h2 id="cinema-title">From the first invite to the first trail, the journey already has momentum.</h2>
+          <p>
+            Follow Rhiannon through the trip story before you choose your departure: who you travel
+            with, where you go, what the route feels like and how your spot is reserved.
+          </p>
+          <div className="cinema-progress" aria-hidden="true">
+            <motion.i style={{ width: reducedMotion ? "100%" : progressWidth }} />
+          </div>
+          <div className="film-chapters">
+            {filmScenes.map((scene, index) => (
+              <FilmChapter
+                key={scene.title}
+                scene={scene}
+                index={index}
+                progress={scrollYProgress}
+                reducedMotion={reducedMotion}
+              />
+            ))}
+          </div>
+        </div>
+
+        <motion.div
+          className="cinema-stage"
+          style={reducedMotion ? undefined : { rotateY: stageRotate, y: stageY }}
+          aria-label="Cinematic scroll preview"
+        >
+          <div className="stage-orbit" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+          {filmScenes.map((scene, index) => (
+            <FilmFrame
+              key={scene.title}
+              scene={scene}
+              index={index}
+              progress={scrollYProgress}
+              reducedMotion={reducedMotion}
+            />
+          ))}
+          <div className="stage-route" aria-hidden="true">
+            <span>Host</span>
+            <span>Trip</span>
+            <span>Route</span>
+            <span>Book</span>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function ItineraryDay({ item, index, total, progress, reducedMotion }) {
+  const start = total <= 1 ? 0 : index / total;
+  const end = Math.min(1, start + 0.28);
+  const opacity = useTransform(progress, [start, start + 0.08, end], [0.42, 1, 0.72]);
+  const x = useTransform(progress, [start, end], [24, -2]);
+  const scale = useTransform(progress, [start, start + 0.08, end], [0.98, 1.02, 1]);
+
+  return (
+    <motion.div
+      className="itinerary-item"
+      style={reducedMotion ? undefined : { opacity, x, scale }}
+      initial={reducedMotion ? undefined : { opacity: 0, x: 22 }}
+      whileInView={reducedMotion ? undefined : { opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{ duration: 0.36, delay: index * 0.04 }}
+    >
+      <span>{item.day}</span>
+      <div>
+        <h3>{item.title}</h3>
+        <p>{item.body}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+function ItineraryFlythrough({ trip }) {
+  const reducedMotion = useReducedMotion();
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const routeScale = useTransform(scrollYProgress, [0.12, 0.84], [0.05, 1]);
+  const imageY = useTransform(scrollYProgress, [0, 1], [22, -22]);
+
+  return (
+    <section className="itinerary-section itinerary-flythrough" ref={sectionRef}>
+      <div className="itinerary-map-card">
+        <span className="script-label">Itinerary preview</span>
+        <h2>Day-by-day trail</h2>
+        <p>
+          Get the rhythm of the adventure before you commit, with each day moving from arrival to
+          trail time, local food, group moments and the final view.
+        </p>
+        <div className="mini-route-stage">
+          <motion.img
+            src={trip.image}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            style={reducedMotion ? undefined : { y: imageY }}
+          />
+          <div className="mini-route-scrim" aria-hidden="true" />
+          <motion.i
+            className="mini-route-line"
+            aria-hidden="true"
+            style={reducedMotion ? { scaleX: 1 } : { scaleX: routeScale }}
+          />
+          <div className="mini-route-pins" aria-hidden="true">
+            <span>Start</span>
+            <span>Trail</span>
+            <span>Group</span>
+            <span>Finish</span>
+          </div>
+        </div>
+      </div>
+      <div className="itinerary-list">
+        {trip.itinerary.map((item, index) => (
+          <ItineraryDay
+            key={item.day}
+            item={item}
+            index={index}
+            total={trip.itinerary.length}
+            progress={scrollYProgress}
+            reducedMotion={Boolean(reducedMotion)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function HomePage() {
-  const progress = useScrollProgress(1800);
+  const progress = useScrollProgress(2400);
   const reducedMotion = useReducedMotion();
   const trailStoryRef = useRef(null);
   const { scrollYProgress: trailScroll } = useScroll({
@@ -232,7 +458,9 @@ function HomePage() {
     <>
       <section className="hero-section" aria-labelledby="home-title">
         <div className="hero-image" aria-hidden="true" />
-        <TrailScene progress={progress} reducedMotion={Boolean(reducedMotion)} />
+        <Suspense fallback={<div className="trail-scene trail-scene-fallback" aria-hidden="true" />}>
+          <TrailScene progress={progress} reducedMotion={Boolean(reducedMotion)} />
+        </Suspense>
         <div className="hero-overlay" aria-hidden="true" />
         <div className="hero-content">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -288,7 +516,7 @@ function HomePage() {
               <div aria-hidden="true">
                 <i />
               </div>
-              <p>Scroll to unlock the route, trips, checkout and admin view.</p>
+              <p>Scroll to move through the host, route, trip details and booking promise.</p>
             </motion.div>
           </motion.div>
         </div>
@@ -297,6 +525,8 @@ function HomePage() {
           <ChevronRight size={22} />
         </div>
       </section>
+
+      <ScrollCinemaSection reducedMotion={Boolean(reducedMotion)} />
 
       <section className="trail-story" ref={trailStoryRef}>
         <motion.div
@@ -521,28 +751,7 @@ function TripDetailPage({ trip }) {
             </section>
           </div>
 
-          <section className="itinerary-section">
-            <span className="script-label">Itinerary preview</span>
-            <h2>Day-by-day trail</h2>
-            <div className="itinerary-list">
-              {trip.itinerary.map((item, index) => (
-                <motion.div
-                  className="itinerary-item"
-                  key={item.day}
-                  initial={{ opacity: 0, x: 22 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.45 }}
-                  transition={{ duration: 0.36, delay: index * 0.05 }}
-                >
-                  <span>{item.day}</span>
-                  <div>
-                    <h3>{item.title}</h3>
-                    <p>{item.body}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </section>
+          <ItineraryFlythrough trip={trip} />
         </article>
 
         <aside className="booking-panel" aria-label="Booking summary">

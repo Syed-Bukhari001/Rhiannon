@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Sparkles, useTexture } from "@react-three/drei";
+import { Float, Sparkles, Text, useTexture } from "@react-three/drei";
 import { Suspense, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { asset } from "../utils/assets.js";
@@ -195,6 +195,95 @@ function ExpeditionPostcards({ progress, reducedMotion }) {
   );
 }
 
+function DestinationGates({ progress, reducedMotion }) {
+  const gates = [
+    { label: "Greece", position: [-2.45, -0.78, 3.82], threshold: 0.18, color: "#f2a85e" },
+    { label: "Group", position: [0.18, -0.34, 1.05], threshold: 0.44, color: "#83c3c8" },
+    { label: "Deposit", position: [1.86, 0.04, -1.86], threshold: 0.68, color: "#ffd29e" },
+    { label: "Booked", position: [3.58, 0.82, -5.72], threshold: 0.9, color: "#f7f0df" },
+  ];
+
+  return (
+    <group>
+      {gates.map((gate, index) => {
+        const active = progress >= gate.threshold;
+        const opacity = active ? 0.88 : 0.24;
+
+        return (
+          <Float
+            key={gate.label}
+            speed={reducedMotion ? 0 : 0.85 + index * 0.1}
+            rotationIntensity={reducedMotion ? 0 : 0.06}
+            floatIntensity={reducedMotion ? 0 : 0.1}
+          >
+            <group position={gate.position}>
+              <mesh rotation={[Math.PI / 2, 0, 0]}>
+                <torusGeometry args={[active ? 0.34 : 0.25, 0.012, 12, 72]} />
+                <meshStandardMaterial
+                  color={gate.color}
+                  emissive={gate.color}
+                  emissiveIntensity={active ? 0.72 : 0.16}
+                  opacity={opacity}
+                  transparent
+                  roughness={0.42}
+                />
+              </mesh>
+              <mesh position={[0, 0.54, 0]}>
+                <cylinderGeometry args={[0.014, 0.014, 1.08, 12]} />
+                <meshStandardMaterial
+                  color={gate.color}
+                  emissive={gate.color}
+                  emissiveIntensity={active ? 0.44 : 0.12}
+                  opacity={opacity}
+                  transparent
+                />
+              </mesh>
+              <Text
+                position={[0, 1.18, 0]}
+                fontSize={0.16}
+                anchorX="center"
+                anchorY="middle"
+                color={active ? "#fff4dc" : "#d7d9cf"}
+                outlineWidth={0.008}
+                outlineColor="#07100d"
+                fillOpacity={active ? 1 : 0.55}
+              >
+                {gate.label}
+              </Text>
+            </group>
+          </Float>
+        );
+      })}
+    </group>
+  );
+}
+
+function AltitudeRings({ progress, reducedMotion }) {
+  const group = useRef(null);
+  const rings = [1.35, 1.95, 2.55, 3.15];
+
+  useFrame((state) => {
+    if (!group.current || reducedMotion) return;
+    group.current.rotation.z = -0.2 + progress * 0.45 + Math.sin(state.clock.elapsedTime * 0.24) * 0.015;
+    group.current.position.y = -1.12 + progress * 0.28;
+  });
+
+  return (
+    <group ref={group} position={[0.35, -1.12, 0.25]} rotation={[Math.PI / 2, 0, -0.2]}>
+      {rings.map((radius, index) => (
+        <mesh key={radius}>
+          <torusGeometry args={[radius, 0.006, 8, 96]} />
+          <meshBasicMaterial
+            color={index % 2 === 0 ? "#ffd29e" : "#83c3c8"}
+            opacity={0.08 + progress * 0.08}
+            transparent
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 function SceneRig({ progress, reducedMotion }) {
   const { camera } = useThree();
   const target = useMemo(() => new THREE.Vector3(), []);
@@ -234,8 +323,10 @@ function TrailWorld({ progress, reducedMotion }) {
       <pointLight position={[-3, 2, 3]} intensity={0.8} color="#d98643" />
       <pointLight position={[2.5, 1.4, -3.8]} intensity={0.65 + progress * 0.55} color="#83c3c8" />
       <group ref={group}>
+        <AltitudeRings progress={progress} reducedMotion={reducedMotion} />
         <Terrain />
         <TrailPath progress={progress} reducedMotion={reducedMotion} />
+        <DestinationGates progress={progress} reducedMotion={reducedMotion} />
         <RidgeCards progress={progress} reducedMotion={reducedMotion} />
         <ExpeditionPostcards progress={progress} reducedMotion={reducedMotion} />
         <Sparkles
